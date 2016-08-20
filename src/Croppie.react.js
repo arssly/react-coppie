@@ -628,7 +628,124 @@ var Croppie = React.createClass({
 			this.transform.y = top;
 			this.transform.x = left;
 		}
-	 }
+	 },
+	RESULT_DEFAULTS : {
+	type: 'canvas',
+	format: 'png',
+	quality: 1
+	},
+	RESULT_FORMATS : ['jpeg', 'webp', 'png'],
+	 result(options) {
+		var self = this,
+			data = this._get(),
+			opts = deepExtend(this.RESULT_DEFAULTS, deepExtend({}, options)),
+			type = (typeof (options) === 'string' ? options : (opts.type || 'viewport')),
+			size = opts.size,
+			format = opts.format,
+			quality = opts.quality,
+			backgroundColor = opts.backgroundColor,
+			circle = false,//TODOtypeof opts.circle === 'boolean' ? opts.circle : (self.options.viewport.type === 'circle'),
+			vpRect = self.refs.viewport.getBoundingClientRect(),
+			ratio = vpRect.width / vpRect.height,
+			prom;
+
+		if (size === 'viewport') {
+			data.outputWidth = vpRect.width;
+			data.outputHeight = vpRect.height;
+		} else if (typeof size === 'object') {
+			if (size.width && size.height) {
+				data.outputWidth = size.width;
+				data.outputHeight = size.height;
+			} else if (size.width) {
+				data.outputWidth = size.width;
+				data.outputHeight = size.width / ratio;
+			} else if (size.height) {
+				data.outputWidth = size.height * ratio;
+				data.outputHeight = size.height;
+			}
+		}
+
+		if (this.RESULT_FORMATS.indexOf(format) > -1) {
+			data.format = 'image/' + format;
+			data.quality = quality;
+		}
+
+		data.circle = circle;
+		data.url = self.data.url;
+		data.backgroundColor = backgroundColor;
+
+		prom = new Promise(function (resolve, reject) {
+			if (type === 'canvas') {
+				resolve(_getCanvasResult.call(self, self.refs.preview, data));
+			}
+			else {
+				resolve(_getHtmlResult.call(self, data));
+			}
+		});
+		return prom;
+	},
+	 _get() {//TODO
+		var self = this,
+			imgData = self.refs.preview.getBoundingClientRect(),
+			vpData = self.refs.viewport.getBoundingClientRect(),
+			x1 = vpData.left - imgData.left,
+			y1 = vpData.top - imgData.top,
+			widthDiff = (vpData.width - self.refs.viewport.offsetWidth) / 2,
+			heightDiff = (vpData.height - self.refs.viewport.offsetHeight) / 2,
+			x2 = x1 + self.refs.viewport.offsetWidth + widthDiff,
+			y2 = y1 + self.refs.viewport.offsetHeight + heightDiff,
+			scale = self._currentZoom;
+
+		if (scale === Infinity || isNaN(scale)) {
+			scale = 1;
+		}
+
+		var max = self.options.enforceBoundary ? 0 : Number.NEGATIVE_INFINITY;
+		x1 = Math.max(max, x1 / scale);
+		y1 = Math.max(max, y1 / scale);
+		x2 = Math.max(max, x2 / scale);
+		y2 = Math.max(max, y2 / scale);
+
+		return {
+			points: [fix(x1), fix(y1), fix(x2), fix(y2)],
+			zoom: scale
+		};
+	},
+	_getCanvasResult(img, data) {
+		var points = data.points,
+			left = points[0],
+			top = points[1],
+			width = (points[2] - points[0]),
+			height = (points[3] - points[1]),
+			circle = data.circle,
+			canvas = document.createElement('canvas'),
+			ctx = canvas.getContext('2d'),
+			outWidth = width,
+			outHeight = height;
+
+		if (data.outputWidth && data.outputHeight) {
+			outWidth = data.outputWidth;
+			outHeight = data.outputHeight;
+		}
+
+		canvas.width = outWidth;
+		canvas.height = outHeight;
+
+		if (data.backgroundColor) {
+			ctx.fillStyle = data.backgroundColor;
+			ctx.fillRect(0, 0, outWidth, outHeight);
+		}
+		ctx.drawImage(img, left, top, width, height, 0, 0, outWidth, outHeight);
+		if (circle) {
+			ctx.fillStyle = '#fff';
+			ctx.globalCompositeOperation = 'destination-in';
+			ctx.beginPath();
+			ctx.arc(outWidth / 2, outHeight / 2, outWidth / 2, 0, Math.PI * 2, true);
+			ctx.closePath();
+			ctx.fill();
+		}
+		return canvas.toDataURL(data.format, data.quality);
+	}
 });
 
 module.exports = Croppie;
