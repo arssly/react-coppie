@@ -679,7 +679,8 @@ var Croppie = React.createClass({
 				resolve(self._getCanvasResult(self.refs.preview, data));
 			}
 			else {
-				resolve(_getHtmlResult.call(self, data));
+				throw new Error("not yet implemented ");
+				//resolve(_getHtmlResult.call(self, data));TODO
 			}
 		});
 		return prom;
