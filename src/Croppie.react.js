@@ -676,7 +676,7 @@ var Croppie = React.createClass({
 
 		prom = new Promise(function (resolve, reject) {
 			if (type === 'canvas') {
-				resolve(_getCanvasResult.call(self, self.refs.preview, data));
+				resolve(self._getCanvasResult(self.refs.preview, data));
 			}
 			else {
 				resolve(_getHtmlResult.call(self, data));
@@ -700,14 +700,14 @@ var Croppie = React.createClass({
 			scale = 1;
 		}
 
-		var max = self.options.enforceBoundary ? 0 : Number.NEGATIVE_INFINITY;
+		var max = self.state.enforceBoundary ? 0 : Number.NEGATIVE_INFINITY;
 		x1 = Math.max(max, x1 / scale);
 		y1 = Math.max(max, y1 / scale);
 		x2 = Math.max(max, x2 / scale);
 		y2 = Math.max(max, y2 / scale);
 
 		return {
-			points: [fix(x1), fix(y1), fix(x2), fix(y2)],
+			points: [this.fix(x1), this.fix(y1), this.fix(x2), this.fix(y2)],
 			zoom: scale
 		};
 	},

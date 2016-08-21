@@ -14,16 +14,20 @@ var Thing = React.createClass({
 				<Croppie  url="image.jpg" ref="croppie"/>
 					<span onClick={this.showResult}>result</span>
 				<div style={{height:"200px"}}></div>
-				{this.state.result && 
+				{this.state.result &&
 					<img src={this.state.result} alt=""/>
 				}
 			</div>
 		)
 	},
 	showResult(){
-		this.setState({
-			result : this.refs.croppie.result()
-		})
+		var self= this;
+		this.refs.croppie.result().then( (res)=>{
+			this.setState({
+				result : res
+			});
+		});
+
 	}
 });
 
