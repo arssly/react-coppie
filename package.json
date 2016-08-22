@@ -7,7 +7,7 @@
     "build": "./node_modules/.bin/babel --presets react,es2015 src -d lib"
   },
   "author": "arsalan salari",
-  "license": "MIT",
+  "license": "ISC",
   "dependencies": {
     "react": "^15.3.0",
     "react-dom": "^15.3.0"
