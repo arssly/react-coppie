@@ -1,5 +1,5 @@
 var React = require("react");
-var Croppie = require("react-croppie/lib/Croppie.react");
+var Croppie = require("react-croppie");
 
 var Thing = React.createClass({
 	getInitialState(){
