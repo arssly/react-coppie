@@ -62,6 +62,14 @@ var Croppie = React.createClass({
 	componentDidUpdate(){
 		// console.log("weird newCss",this.refs.preview.getBoundingClientRect());
 	},
+	componentWillReceiveProps(nextProps){
+		this.setState(deepExtend(deepExtend({}, this.defaults()), nextProps));
+		var bindOpts = {
+			url: nextProps.url
+		};
+		this._bind(nextProps.url);
+
+	},
 	defaults(){
 		return {
 			viewport: {
