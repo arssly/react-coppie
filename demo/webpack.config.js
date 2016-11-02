@@ -1,3 +1,4 @@
+const path = require("path");
 
 module.exports ={
 	entry:[
@@ -5,6 +6,13 @@ module.exports ={
 	],
 	output:{
 		filename:"bundle.js"
+	},
+	resolve: {
+		alias: {
+			"react-croppie": path.resolve('../lib/Croppie.react.js'),
+			"react-dom" : path.resolve('./node_modules/react-dom'),
+			"react" 	: path.resolve('./node_modules/react')
+		}
 	},
 	module:{
 		loaders:[

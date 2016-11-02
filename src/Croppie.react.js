@@ -683,8 +683,11 @@ var Croppie = React.createClass({
 		data.backgroundColor = backgroundColor;
 
 		prom = new Promise(function (resolve, reject) {
+			if(type === 'rawCanvas'){
+				resolve(self._getCanvasResult(self.refs.preview,data));
+			}
 			if (type === 'canvas') {
-				resolve(self._getCanvasResult(self.refs.preview, data));
+				resolve(self._getBase64Result(data));
 			}
 			else if(type ==='blob') {
 				resolve(self._getBlobResult(data));
@@ -692,10 +695,16 @@ var Croppie = React.createClass({
 		});
 		return prom;
 	},
+	_getBase64Result(data){
+		var self = this;
+		return self._getCanvasResult(self.refs.preview,data).toDataURL(data.format, data.quality);
+	},
 	_getBlobResult(data) {
 		var self = this;
 		return new Promise(function (resolve, reject) {
-			self._getCanvasResult(self.refs.preview,data).toBlob(function (blob) {
+			let canvasRes = self._getCanvasResult(self.refs.preview,data);
+			console.log("canvas res is",canvasRes);
+			canvasRes.toBlob(function (blob) {
 				resolve(blob);
 			}, data.format, data.quality);
 		});
@@ -761,7 +770,7 @@ var Croppie = React.createClass({
 			ctx.closePath();
 			ctx.fill();
 		}
-		return canvas.toDataURL(data.format, data.quality);
+		return canvas;
 	}
 });
 
