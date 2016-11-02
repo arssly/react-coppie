@@ -686,13 +686,21 @@ var Croppie = React.createClass({
 			if (type === 'canvas') {
 				resolve(self._getCanvasResult(self.refs.preview, data));
 			}
-			else {
-				throw new Error("not yet implemented ");
-				//resolve(_getHtmlResult.call(self, data));TODO
+			else if(type ==='blob') {
+				resolve(self._getBlobResult(data));
 			}
 		});
 		return prom;
 	},
+	_getBlobResult(data) {
+		var self = this;
+		return new Promise(function (resolve, reject) {
+			this._getCanvasResult(self.refs.preview,data).toBlob(function (blob) {
+				resolve(blob);
+			}, data.format, data.quality);
+		});
+	},
+
 	 _get() {//TODO
 		var self = this,
 			imgData = self.refs.preview.getBoundingClientRect(),

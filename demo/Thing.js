@@ -22,7 +22,7 @@ var Thing = React.createClass({
 	},
 	showResult(){
 		var self= this;
-		this.refs.croppie.result().then( (res)=>{
+		this.refs.croppie.result({type:'blob'}).then((res)=>{
 			this.setState({
 				result : res
 			});
