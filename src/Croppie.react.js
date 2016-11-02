@@ -695,7 +695,7 @@ var Croppie = React.createClass({
 	_getBlobResult(data) {
 		var self = this;
 		return new Promise(function (resolve, reject) {
-			this._getCanvasResult(self.refs.preview,data).toBlob(function (blob) {
+			self._getCanvasResult(self.refs.preview,data).toBlob(function (blob) {
 				resolve(blob);
 			}, data.format, data.quality);
 		});
