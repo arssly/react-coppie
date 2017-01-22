@@ -21489,7 +21489,7 @@
 			var _this = this;
 
 			var self = this;
-			this.refs.croppie.result({ type: 'blob' }).then(function (res) {
+			this.refs.croppie.result({ type: 'canvas' }).then(function (res) {
 				_this.setState({
 					result: res
 				});
@@ -21569,18 +21569,12 @@
 			return {};
 		},
 		componentDidMount: function componentDidMount() {
-			var bindOpts = {
-				url: this.props.url
-			};
 			this._bind(this.props.url);
 		},
 		componentDidUpdate: function componentDidUpdate() {
 			// console.log("weird newCss",this.refs.preview.getBoundingClientRect());
 		},
 		componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-			var bindOpts = {
-				url: nextProps.url
-			};
 			this._bind(nextProps.url);
 		},
 		getDefaultProps: function getDefaultProps() {
@@ -21921,7 +21915,7 @@
 		fix: function fix(v, decimalPoints) {
 			return parseFloat(v).toFixed(decimalPoints || 0);
 		},
-		_bind: function _bind(options, cb) {
+		_bind: function _bind(options) {
 			var self = this,
 			    url,
 			    points = [],
@@ -21953,9 +21947,6 @@
 			prom.then(function () {
 				self._updatePropertiesFromImage.call(self);
 				// _triggerUpdate.call(self);TODO
-				if (cb) {
-					cb();
-				}
 			});
 			return prom;
 		},
@@ -22012,7 +22003,6 @@
 			cssReset[StyleRelated.CSS_TRANSFORM] = transformReset.toString();
 			cssReset[StyleRelated.CSS_TRANS_ORG] = originReset.toString();
 			cssReset['opacity'] = 1;
-			// css(img, cssReset);
 			this.setState({
 				previewStyle: cssReset
 			});
@@ -22047,7 +22037,6 @@
 
 			transformReset.scale = self._currentZoom;
 			cssReset[StyleRelated.CSS_TRANSFORM] = transformReset.toString();
-			//css(img, cssReset);
 			this.setState({
 				previewStyle: cssReset
 			});
@@ -22147,10 +22136,8 @@
 			    format = opts.format,
 			    quality = opts.quality,
 			    backgroundColor = opts.backgroundColor,
-			    circle = false,
-
-			//TODOtypeof opts.circle === 'boolean' ? opts.circle : (self.options.viewport.type === 'circle'),
-			vpRect = self.refs.viewport.getBoundingClientRect(),
+			    circle = typeof opts.circle === 'boolean' ? opts.circle : self.props.viewport.type === 'circle',
+			    vpRect = self.refs.viewport.getBoundingClientRect(),
 			    ratio = vpRect.width / vpRect.height,
 			    prom;
 
@@ -22183,13 +22170,31 @@
 				if (type === 'rawCanvas') {
 					resolve(self._getCanvasResult(self.refs.preview, data));
 				}
-				if (type === 'canvas') {
+				if (type === 'canvas' || type == 'base64') {
 					resolve(self._getBase64Result(data));
 				} else if (type === 'blob') {
 					resolve(self._getBlobResult(data));
-				}
+				} else resolve(self._getHtmlResult.call(data));
 			});
 			return prom;
+		},
+		_getHtmlResult: function _getHtmlResult(data) {
+			var points = data.points,
+			    div = document.createElement('div'),
+			    img = document.createElement('img'),
+			    width = points[2] - points[0],
+			    height = points[3] - points[1];
+
+			addClass(div, 'croppie-result');
+			div.appendChild(img);
+			img.style.left = -1 * points[0] + 'px';
+			img.style.top = -1 * points[1] + 'px';
+			img.src = data.url;
+
+			div.style.width = width + 'px';
+			div.style.height = height + 'px';
+
+			return div;
 		},
 		_getBase64Result: function _getBase64Result(data) {
 			var self = this;

@@ -54,18 +54,12 @@ var Croppie = React.createClass({
 		return {};
 	},
 	componentDidMount(){
-		var bindOpts = {
-			url: this.props.url,
-		};
 		this._bind(this.props.url);
 	},
 	componentDidUpdate(){
 		// console.log("weird newCss",this.refs.preview.getBoundingClientRect());
 	},
 	componentWillReceiveProps(nextProps){
-		var bindOpts = {
-			url: nextProps.url
-		};
 		this._bind(nextProps.url);
 	},
 	getDefaultProps(){
@@ -421,7 +415,7 @@ var Croppie = React.createClass({
 	 fix(v, decimalPoints) {
 		return parseFloat(v).toFixed(decimalPoints || 0);
 	},
-	 _bind(options, cb) {
+	 _bind(options) {
 		var self = this,
 			url,
 			points = [],
@@ -455,9 +449,6 @@ var Croppie = React.createClass({
 		prom.then(function () {
 			self._updatePropertiesFromImage.call(self);
 			// _triggerUpdate.call(self);TODO
-			if (cb) {
-				cb();
-			}
 		});
 		return prom;
 	},
@@ -514,7 +505,6 @@ var Croppie = React.createClass({
 		cssReset[StyleRelated.CSS_TRANSFORM] = transformReset.toString();
 		cssReset[StyleRelated.CSS_TRANS_ORG] = originReset.toString();
 		cssReset['opacity'] = 1;
-		// css(img, cssReset);
 		 this.setState({
 			 previewStyle : cssReset
 		 });
@@ -550,7 +540,6 @@ var Croppie = React.createClass({
 
 		transformReset.scale = self._currentZoom;
 		cssReset[StyleRelated.CSS_TRANSFORM] = transformReset.toString();
-		//css(img, cssReset);
 		 this.setState({
 			 previewStyle : cssReset
 		 });
@@ -650,7 +639,7 @@ var Croppie = React.createClass({
 			format = opts.format,
 			quality = opts.quality,
 			backgroundColor = opts.backgroundColor,
-			circle = false,//TODOtypeof opts.circle === 'boolean' ? opts.circle : (self.options.viewport.type === 'circle'),
+			circle =  typeof opts.circle === 'boolean' ? opts.circle : (self.props.viewport.type === 'circle'),
 			vpRect = self.refs.viewport.getBoundingClientRect(),
 			ratio = vpRect.width / vpRect.height,
 			prom;
@@ -684,14 +673,24 @@ var Croppie = React.createClass({
 			if(type === 'rawCanvas'){
 				resolve(self._getCanvasResult(self.refs.preview,data));
 			}
-			if (type === 'canvas') {
+			if (type === 'canvas' || type == 'base64') {
 				resolve(self._getBase64Result(data));
 			}
 			else if(type ==='blob') {
 				resolve(self._getBlobResult(data));
 			}
+			else
+				resolve(self._getHtmlResult(data));
 		});
 		return prom;
+	},
+	_getHtmlResult(data){
+		var points = data.points;
+		return (
+			<div className="croppie-result" style={{width:points[2] - points[0],height:points[3] - points[1]}}>
+				<img src={data.url} style={{left:(-1 * points[0]) + 'px',top: (-1 * points[1]) + 'px'}}/>
+			</div>
+		);
 	},
 	_getBase64Result(data){
 		var self = this;
