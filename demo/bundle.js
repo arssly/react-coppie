@@ -21489,7 +21489,7 @@
 			var _this = this;
 
 			var self = this;
-			this.refs.croppie.result().then(function (res) {
+			this.refs.croppie.result({ type: 'blob' }).then(function (res) {
 				_this.setState({
 					result: res
 				});
@@ -21505,14 +21505,6 @@
 
 	"use strict";
 
-	module.exports = __webpack_require__(175);
-
-/***/ },
-/* 175 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
 	var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
@@ -21521,14 +21513,13 @@
 		return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 	};
 
-	var React = __webpack_require__(2);
-	var ReactDOM = __webpack_require__(35);
+	var React = __webpack_require__(175);
+	var ReactDOM = __webpack_require__(176);
 
-	var Transform = __webpack_require__(176);
-	var StyleRelated = __webpack_require__(177);
+	var Transform = __webpack_require__(177);
+	var StyleRelated = __webpack_require__(178);
 
-	//TODO////
-
+	///////////
 	var TransformOrigin = function TransformOrigin(el) {
 		if (!el || !el.style[StyleRelated.CSS_TRANS_ORG]) {
 			this.x = 0;
@@ -21571,21 +21562,28 @@
 			enableExif: React.PropTypes.bool,
 			enforceBoundary: React.PropTypes.bool,
 			enableOrientation: React.PropTypes.bool,
-			update: React.PropTypes.func
+			update: React.PropTypes.func,
+			url: React.PropTypes.string
 		},
 		getInitialState: function getInitialState() {
-			return deepExtend(deepExtend({}, this.defaults()), this.props);
+			return {};
 		},
 		componentDidMount: function componentDidMount() {
 			var bindOpts = {
-				url: this.state.url
+				url: this.props.url
 			};
-			this._bind(this.state.url);
+			this._bind(this.props.url);
 		},
 		componentDidUpdate: function componentDidUpdate() {
 			// console.log("weird newCss",this.refs.preview.getBoundingClientRect());
 		},
-		defaults: function defaults() {
+		componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+			var bindOpts = {
+				url: nextProps.url
+			};
+			this._bind(nextProps.url);
+		},
+		getDefaultProps: function getDefaultProps() {
 			return {
 				viewport: {
 					width: 100,
@@ -21614,31 +21612,31 @@
 		render: function render() {
 			var self = this,
 			    contClass = 'croppie-container',
-			    customViewportClass = this.state.viewport.type ? 'cr-vp-' + this.state.viewport.type : " ",
+			    customViewportClass = this.props.viewport.type ? 'cr-vp-' + this.props.viewport.type : " ",
 			    boundary,
 			    img,
 			    viewport,
 			    overlay,
 			    canvas;
 
-			var onWheelFunc = this.state.enableZoom ? this.onWheel : function () {};
+			var onWheelFunc = this.props.enableZoom ? this.onWheel : function () {};
 			return React.createElement("div", { className: contClass }, React.createElement("div", { className: "cr-boundary",
 				ref: "boundary",
-				style: { width: this.state.boundary.width, height: this.state.boundary.height },
+				style: { width: this.props.boundary.width, height: this.props.boundary.height },
 				onWheel: onWheelFunc
 			}, React.createElement("img", { src: "", className: "cr-image", ref: "preview", style: this.state.previewStyle || {} }), React.createElement("div", { tabIndex: "0",
 				onKeyDown: this.keyDown,
 				ref: "viewport",
 				className: "cr-viewport " + customViewportClass,
-				style: { width: this.state.viewport.width, height: this.state.viewport.height }
+				style: { width: this.props.viewport.width, height: this.props.viewport.height }
 			}), React.createElement("div", { className: "cr-overlay",
 				onTouchStart: this.mouseDown,
 				onMouseDown: this.mouseDown,
 				style: this.state.overlayStyle
-			})), this.state.enableZoom && React.createElement("div", { className: "cr-slider-wrap" }, React.createElement("input", { type: "range",
+			})), this.props.enableZoom && React.createElement("div", { className: "cr-slider-wrap" }, React.createElement("input", { type: "range",
 				className: "cr-slider",
 				step: "0.0001",
-				style: { display: this.state.showZoomer ? "" : "none" },
+				style: { display: this.props.showZoomer ? "" : "none" },
 				onChange: this.changeZoom,
 				ref: "zoomer"
 			})));
@@ -21821,7 +21819,7 @@
 		},
 		_setZoomerVal: function _setZoomerVal(v) {
 			//TODO
-			if (this.state.enableZoom) {
+			if (this.props.enableZoom) {
 				var z = ReactDOM.findDOMNode(this.refs.zoomer),
 				    val = this.fix(v, 4);
 				z.value = Math.max(z.min, Math.min(z.max, val));
@@ -21849,7 +21847,7 @@
 			transform.scale = self._currentZoom;
 			applyCss();
 
-			if (this.state.enforceBoundary) {
+			if (this.props.enforceBoundary) {
 				var boundaries = this._getVirtualBoundaries(vpRect),
 				    transBoundaries = boundaries.translate,
 				    oBoundaries = boundaries.origin;
@@ -21885,8 +21883,8 @@
 			    scale = self._currentZoom,
 			    vpWidth = viewport.width,
 			    vpHeight = viewport.height,
-			    centerFromBoundaryX = self.state.boundary.width / 2,
-			    centerFromBoundaryY = self.state.boundary.height / 2,
+			    centerFromBoundaryX = self.props.boundary.width / 2,
+			    centerFromBoundaryY = self.props.boundary.height / 2,
 			    imgRect = self.refs.preview.getBoundingClientRect(),
 			    curImgWidth = imgRect.width,
 			    curImgHeight = imgRect.height,
@@ -22025,8 +22023,8 @@
 			self._originalImageWidth = imgData.width;
 			self._originalImageHeight = imgData.height;
 
-			if (self.state.enableZoom) {
-				if (self.state.enforceBoundary) {
+			if (self.props.enableZoom) {
+				if (self.props.enforceBoundary) {
 					minW = vpData.width / imgData.width;
 					minH = vpData.height / imgData.height;
 					minZoom = Math.max(minW, minH);
@@ -22120,7 +22118,7 @@
 			    top = this.transform.y + deltaY,
 			    left = this.transform.x + deltaX;
 
-			if (self.state.enforceBoundary) {
+			if (self.props.enforceBoundary) {
 				if (this.vpRect.top > imgRect.top + deltaY && this.vpRect.bottom < imgRect.bottom + deltaY) {
 					this.transform.y = top;
 				}
@@ -22182,14 +22180,30 @@
 			data.backgroundColor = backgroundColor;
 
 			prom = new Promise(function (resolve, reject) {
-				if (type === 'canvas') {
+				if (type === 'rawCanvas') {
 					resolve(self._getCanvasResult(self.refs.preview, data));
-				} else {
-					throw new Error("not yet implemented ");
-					//resolve(_getHtmlResult.call(self, data));TODO
+				}
+				if (type === 'canvas') {
+					resolve(self._getBase64Result(data));
+				} else if (type === 'blob') {
+					resolve(self._getBlobResult(data));
 				}
 			});
 			return prom;
+		},
+		_getBase64Result: function _getBase64Result(data) {
+			var self = this;
+			return self._getCanvasResult(self.refs.preview, data).toDataURL(data.format, data.quality);
+		},
+		_getBlobResult: function _getBlobResult(data) {
+			var self = this;
+			return new Promise(function (resolve, reject) {
+				var canvasRes = self._getCanvasResult(self.refs.preview, data);
+				console.log("canvas res is", canvasRes);
+				canvasRes.toBlob(function (blob) {
+					resolve(blob);
+				}, data.format, data.quality);
+			});
 		},
 		_get: function _get() {
 			//TODO
@@ -22208,7 +22222,7 @@
 				scale = 1;
 			}
 
-			var max = self.state.enforceBoundary ? 0 : Number.NEGATIVE_INFINITY;
+			var max = self.props.enforceBoundary ? 0 : Number.NEGATIVE_INFINITY;
 			x1 = Math.max(max, x1 / scale);
 			y1 = Math.max(max, y1 / scale);
 			x2 = Math.max(max, x2 / scale);
@@ -22252,7 +22266,7 @@
 				ctx.closePath();
 				ctx.fill();
 			}
-			return canvas.toDataURL(data.format, data.quality);
+			return canvas;
 		}
 	});
 
@@ -22282,7 +22296,23 @@
 	//TODO
 
 /***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(3);
+
+/***/ },
 /* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(36);
+
+/***/ },
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22303,7 +22333,7 @@
 		}
 	}
 
-	var StylesRelated = __webpack_require__(177);
+	var StylesRelated = __webpack_require__(178);
 	var _TRANSLATE = 'translate3d',
 	    _TRANSLATE_SUFFIX = ', 0px';
 
@@ -22403,7 +22433,7 @@
 	// };
 
 /***/ },
-/* 177 */
+/* 178 */
 /***/ function(module, exports) {
 
 	'use strict';
