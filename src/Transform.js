@@ -10,7 +10,7 @@ class Transform {
 	}
 
 	static parse(v) {
-		console.log("StylesRelated.CSS_TRANSFORM",StylesRelated.CSS_TRANSFORM);
+		// console.log("StylesRelated.CSS_TRANSFORM",StylesRelated.CSS_TRANSFORM);
 		if (v.style) {
 			return Transform.parse(v.style[StylesRelated.CSS_TRANSFORM]);
 		}

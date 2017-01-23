@@ -56,11 +56,9 @@ var Croppie = React.createClass({
 	componentDidMount(){
 		this._bind(this.props.url);
 	},
-	componentDidUpdate(){
-		// console.log("weird newCss",this.refs.preview.getBoundingClientRect());
-	},
 	componentWillReceiveProps(nextProps){
-		this._bind(nextProps.url);
+		if(nextProps.url !== this.props.url)
+			this._bind(nextProps.url);
 	},
 	getDefaultProps(){
 		return {
@@ -92,8 +90,11 @@ var Croppie = React.createClass({
 		var self = this,
 			contClass = 'croppie-container',
 			customViewportClass = this.props.viewport.type ? 'cr-vp-' + this.props.viewport.type : " ",
-			boundary, img, viewport, overlay, canvas;
-
+			preview;
+		if(self.props.enableOrientation)
+			preview = <canvas  className="cr-image" ref="preview" style={this.state.previewStyle ||  {}}> </canvas>;
+		else
+			preview = <img src="" className="cr-image" ref="preview" style={this.state.previewStyle ||  {}}/>;
 
 		var onWheelFunc = this.props.enableZoom ? this.onWheel : () =>{};
 		return (
@@ -103,7 +104,7 @@ var Croppie = React.createClass({
 					 style={{width :this.props.boundary.width,height:this.props.boundary.height}}
 					 onWheel = {onWheelFunc}
 				>
-					<img src="" className="cr-image" ref="preview" style={this.state.previewStyle ||  {}}/>
+					{preview}
 
 					<div tabIndex="0"
 						 onKeyDown={this.keyDown}
@@ -453,6 +454,7 @@ var Croppie = React.createClass({
 		return prom;
 	},
 	 loadImage(src, imageEl) {
+		var self = this;
 		var img = imageEl || new Image(),
 			prom;
 
@@ -463,7 +465,7 @@ var Croppie = React.createClass({
 			});
 		} else {
 			prom = new Promise(function (resolve, reject) {
-				if (src.substring(0,4).toLowerCase() === 'http') {
+				if (self.props.enableOrientation && src.substring(0,4).toLowerCase() === 'http') {
 					img.setAttribute('crossOrigin', 'anonymous');
 				}
 				img.onload = function () {
@@ -700,7 +702,6 @@ var Croppie = React.createClass({
 		var self = this;
 		return new Promise(function (resolve, reject) {
 			let canvasRes = self._getCanvasResult(self.refs.preview,data);
-			console.log("canvas res is",canvasRes);
 			canvasRes.toBlob(function (blob) {
 				resolve(blob);
 			}, data.format, data.quality);
