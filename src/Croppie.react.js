@@ -635,7 +635,7 @@ var Croppie = React.createClass({
 	 result(options) {
 		var self = this,
 			data = this._get(),
-			opts = deepExtend(this.RESULT_DEFAULTS, deepExtend({}, options)),
+			opts = deepExtend(deepExtend({},this.RESULT_DEFAULTS), deepExtend({}, options)),
 			type = (typeof (options) === 'string' ? options : (opts.type || 'viewport')),
 			size = opts.size,
 			format = opts.format,
@@ -645,7 +645,7 @@ var Croppie = React.createClass({
 			vpRect = self.refs.viewport.getBoundingClientRect(),
 			ratio = vpRect.width / vpRect.height,
 			prom;
-
+			console.log("results defaults are", this.RESULT_DEFAULTS);
 		if (size === 'viewport') {
 			data.outputWidth = vpRect.width;
 			data.outputHeight = vpRect.height;
@@ -780,8 +780,12 @@ function deepExtend(destination, source) {
 		if(!source.hasOwnProperty(property))
 			continue;
 		if (source[property] && source[property].constructor && source[property].constructor === Object) {
-			destination[property] = destination[property] || {};
-			deepExtend(destination[property], source[property]);
+			if (destination[property] && destination[property].constructor && destination[property].constructor === Object)
+				deepExtend(destination[property], source[property]);
+			else{
+				destination[property] ={};
+				deepExtend(destination[property], source[property]);
+			}
 		} else {
 			destination[property] = source[property];
 		}
