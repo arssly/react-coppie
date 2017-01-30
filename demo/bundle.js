@@ -21478,14 +21478,14 @@
 				React.createElement(Croppie, { url: "image.jpg", ref: "croppie" }),
 				React.createElement(
 					"span",
-					{ onClick: this.showResult },
+					{ onClick: this.getResult },
 					"result"
 				),
 				React.createElement("div", { style: { height: "200px" } }),
 				this.state.result && React.createElement("img", { src: this.state.result, alt: "" })
 			);
 		},
-		showResult: function showResult() {
+		getResult: function showResult() {
 			var _this = this;
 
 			var self = this;
