@@ -4,7 +4,7 @@
   "description": "",
   "main": "react-croppie.js",
   "scripts": {
-    "build": "./node_modules/.bin/babel --presets react,es2015 src -d lib"
+    "build": "./node_modules/.bin/babel --presets react,env src -d lib"
   },
   "author": "arsalan salari",
   "license": "ISC",
@@ -17,11 +17,11 @@
     "create-react-class": "^15.6.3"
   },
   "devDependencies": {
-    "babel-cli": "^6.11.4",
-    "babel-core": "^6.13.2",
-    "babel-loader": "^6.2.5",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^6.4.1",
     "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.11.1",
-    "webpack": "^1.13.2"
+    "babel-preset-react": "^6.24.1",
+    "webpack": "^1.15.0"
   }
 }
