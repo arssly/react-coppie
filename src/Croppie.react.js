@@ -1,8 +1,7 @@
-const React 	= require("react");
-const ReactDOM 	= require("react-dom");
-
-const Transform = require("./Transform");
-const StyleRelated = require("./styleStuff");
+const React = require("react");
+const ReactDOM = require("react-dom");
+const PropTypes = require("prop-types");
+const createReactClass = require('create-react-class');
 
 ///////////
 var TransformOrigin = function (el) {
@@ -24,7 +23,7 @@ TransformOrigin.prototype.toString = function () {
 
 
 
-var Croppie = React.createClass({
+var Croppie = createReactClass({
 	//////////
 	isDragging:false,
 	originalX : null,
@@ -37,18 +36,18 @@ var Croppie = React.createClass({
 	data:{},//TODO
 	//////////////
 	PropTypes: {
-		viewport 			: React.PropTypes.object,//TODO objectOf
-		boundary 			: React.PropTypes.object,//TODO objectOf
-		orientationControls : React.PropTypes.object,//TODO objectOf
-		customClass 		: React.PropTypes.string,
-		showZoomer 			: React.PropTypes.bool,
-		enableZoom 			: React.PropTypes.bool,
-		mouseWheelZoom 		: React.PropTypes.bool,
-		enableExif 			: React.PropTypes.bool,
-		enforceBoundary 	: React.PropTypes.bool,
-		enableOrientation 	: React.PropTypes.bool,
-		update 				: React.PropTypes.func,
-		url 				: React.PropTypes.string
+		viewport: PropTypes.object,//TODO objectOf
+		boundary: PropTypes.object,//TODO objectOf
+		orientationControls: PropTypes.object,//TODO objectOf
+		customClass: PropTypes.string,
+		showZoomer: PropTypes.bool,
+		enableZoom: PropTypes.bool,
+		mouseWheelZoom: PropTypes.bool,
+		enableExif: PropTypes.bool,
+		enforceBoundary: PropTypes.bool,
+		enableOrientation: PropTypes.bool,
+		update: PropTypes.func,
+		url: PropTypes.string
 	},
 	getInitialState(){
 		return {};

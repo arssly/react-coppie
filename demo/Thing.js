@@ -1,7 +1,8 @@
 var React = require("react");
+const createReactClass = require("create-react-class");
 var Croppie = require("../lib/Croppie.react");
 
-var Thing = React.createClass({
+var Thing = createReactClass({
 	getInitialState(){
 		return {
 			url:"image.jpg",

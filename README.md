@@ -9,16 +9,13 @@ Npm:``` npm install react-croppie```
 
 ###in your react component:
 ```
-  var Croppie = require("react-croppie");
+  import Croppie from "react-croppie";
+  import "react-croppie/cropper.css"
   ...
   render(){
     return <Croppie url="path/to/image"/>
   }
   ```
-###in your html file :
-```
-<link rel="stylesheet" href="node_modules/react-croppie/cropper.css">
-```
 
 ##documentation
   
@@ -28,7 +25,7 @@ Npm:``` npm install react-croppie```
   currently we only support canvas type from [croppie docs](http://foliotek.github.io/Croppie/#documentation)
   
   ```
-  var Croppie = require("react-croppie");
+  import Croppie from "react-croppie";
   ...
   render(){
    return <Croppie url="path/to/image" ref="reactCroppie"/>
