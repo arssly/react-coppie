@@ -1,13 +1,13 @@
 # react-coppie
-an image cropping plugin based on [Croppie](http://foliotek.github.io/Croppie)
+An image cropping plugin based on [Croppie](http://foliotek.github.io/Croppie)
 keep in mind this is a work in progress and not all the features of croppie are yet available
-##install 
 
+## Installation 
 Npm:``` npm install react-croppie```
 
-##using react-croppie
+## Using react-croppie
 
-###in your react component:
+### In your react component:
 ```
   var Croppie = require("react-croppie");
   ...
@@ -15,22 +15,22 @@ Npm:``` npm install react-croppie```
     return <Croppie url="path/to/image"/>
   }
   ```
-###in your html file :
+### In your html file :
 ```
 <link rel="stylesheet" href="node_modules/react-croppie/cropper.css">
 ```
 
-##documentation
+## Documentation
   
-  you can pass props to react-croppie component based on [croppie docs](http://foliotek.github.io/Croppie/#documentation)
+  You can pass props to react-croppie component based on [croppie docs](http://foliotek.github.io/Croppie/#documentation)
   
-###the result
-  currently we only support canvas type from [croppie docs](http://foliotek.github.io/Croppie/#documentation)
+### The result
+  Currently we only support canvas type from [croppie docs](http://foliotek.github.io/Croppie/#documentation)
   
   ```
   var Croppie = require("react-croppie");
   ...
-  render(){
+  render() {
    return <Croppie url="path/to/image" ref="reactCroppie"/>
   },
   ...
